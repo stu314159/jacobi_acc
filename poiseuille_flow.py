@@ -72,7 +72,7 @@ def jacobi_solver_boost(L,dp_dx,mu,u_i,tol):
     js_obj.set_u_odd(u_odd)
     js_obj.set_rhs(rhs);
    
-    exit_code = js_obj.solve(1e-6,20000);
+    exit_code = js_obj.solve(tol,1000000);
     nIter = js_obj.get_nIter();
         
     return u_out, nIter, exit_code

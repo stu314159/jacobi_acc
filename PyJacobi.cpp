@@ -52,12 +52,12 @@ void PyJacobi::set_rhs(boost::python::object obj)
 
 void PyJacobi::todev()
 {
-#pragma acc enter data copyin(this[0:1],u_out[0:N],u_even[0:N],u_odd[0:N])
+#pragma acc enter data copyin(this[0:1],u_out[0:N],u_even[0:N],u_odd[0:N],rhs[0:N])
 }
 
 void PyJacobi::fromdev()
 {
-#pragma acc exit data delete(u_out[0:N],u_even[0:N],u_odd[0:N], this[0:1])
+#pragma acc exit data delete(u_out[0:N],u_even[0:N],u_odd[0:N],rhs[0:N], this[0:1])
 }
 
 void PyJacobi::updatehost()
@@ -73,33 +73,35 @@ int PyJacobi::solve(double tol, int maxIter)
 	int exit_code = 0;
 	bool KEEP_GOING = true;
 	double normUpdate, normU, relUpdate;
-
+//#pragma acc data present(u_even,u_odd,rhs,this) 
+{
 	while(KEEP_GOING)
 	{
 		nIter++; //increment iteration counter
 
 		if(nIter%2==0){
-#pragma acc data present(u_even,u_odd,this)
-#pragma acc parallel loop
+//#pragma acc data present(u_even,u_odd,rhs,this)
+#pragma acc parallel loop present(u_even,u_odd,rhs)
 			for(int i=1;i<(N-1); i++){
 				u_odd[i] = 0.5*(u_even[i-1] + u_even[i+1] - rhs[i]);
 			}
+
             normU = 0.;
 
-#pragma acc data present(u_odd,this)
-#pragma acc parallel loop reduction(+:normU)
+//#pragma acc data present(u_odd,this)
+#pragma acc parallel loop reduction(+:normU) present(u_odd)
             for(int i=0;i<N;i++){
             	normU = normU + u_odd[i]*u_odd[i];
             }
 
 		}else{
-#pragma acc data present(u_even,u_odd,this)
-#pragma acc parallel loop
+//#pragma acc data present(u_even,u_odd,rhs,this)
+#pragma acc parallel loop present(u_even,u_odd,rhs,this)
 			for(int i=1;i<(N-1);i++){
 				u_even[i] = 0.5*(u_odd[i-1]+u_odd[i+1] - rhs[i]);
 			}
 
-#pragma acc data present(u_even,this)
+//#pragma acc data present(u_even,this)
 #pragma acc parallel loop reduction(+:normU)
             for(int i=0;i<N;i++){
             	normU = normU + u_even[i]*u_even[i];
@@ -109,8 +111,8 @@ int PyJacobi::solve(double tol, int maxIter)
 		// check for convergence
 		normUpdate = 0.;
 
-#pragma acc data present(u_even,u_odd,this)
-#pragma acc parallel loop reduction(+:normUpdate)
+//#pragma acc data present(u_even,u_odd,this)
+#pragma acc parallel loop reduction(+:normUpdate) present(u_even,u_odd,this)
 		for(int i=0;i<N;i++){
 			normUpdate = normUpdate + (u_even[i] - u_odd[i])*(u_even[i] -u_odd[i]);
 		}
@@ -120,14 +122,14 @@ int PyJacobi::solve(double tol, int maxIter)
 			KEEP_GOING = false;
 			// copy most up-to-date data into u_out
 			if(nIter%2==0){
-#pragma acc data present(u_out,u_odd,this)
-#pragma acc parallel loop
+//#pragma acc data present(u_out,u_odd,this)
+#pragma acc parallel loop present(u_out,u_odd,this)
 				for(int i=0;i<N;i++){
 					u_out[i] = u_odd[i];
 				}
 			}else{
-#pragma acc data present(u_out,u_even,this)
-#pragma acc parallel loop
+//#pragma acc data present(u_out,u_even,this)
+#pragma acc parallel loop present(u_out,u_even,this)
 				for(int i=0;i<N;i++){
 					u_out[i] = u_even[i];
 				}
@@ -139,7 +141,7 @@ int PyJacobi::solve(double tol, int maxIter)
 		}
 
 	}
-
+}//end acc data region
     updatehost();
 	return exit_code;
 

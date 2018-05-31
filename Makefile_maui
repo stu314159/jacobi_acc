@@ -21,10 +21,10 @@ EXT=cpp
 
 #PGI tools
 MPI_CC=pgc++
-#MPI_FLAGS=-std=c++11 -acc -Minfo=acc -ta=nvidia:nordc
-#MPI_FLAGS2=-std=c++11 -shared -Wl,--export-dynamic -ta=nvidia:nordc
-MPI_FLAGS=-std=c++11
-MPI_FLAGS2=-std=c++11 -shared -Wl,--export-dynamic 
+MPI_FLAGS=-std=c++11 -acc -Minfo=acc -ta=nvidia:nordc
+MPI_FLAGS2=-std=c++11 -shared -Wl,--export-dynamic -ta=nvidia:nordc
+#MPI_FLAGS=-std=c++11
+#MPI_FLAGS2=-std=c++11 -shared -Wl,--export-dynamic 
 
 SOURCES= PyJacobi.cpp WorkArounds.cpp
 OBJECTS= WorkArounds.o 
