@@ -115,7 +115,7 @@ int PyJacobi::solve(double tol, int maxIter)
 			normUpdate = normUpdate + (u_even[i] - u_odd[i])*(u_even[i] -u_odd[i]);
 		}
 
-		relUpdate = normUpdate/normU;
+		relUpdate = sqrt(normUpdate)/sqrt(normU);
 		if(relUpdate < tol){
 			KEEP_GOING = false;
 			// copy most up-to-date data into u_out
@@ -145,6 +145,11 @@ int PyJacobi::solve(double tol, int maxIter)
 
 }
 
+int PyJacobi::get_nIter()
+{
+  return nIter;
+}
+
 using namespace boost::python;
 BOOST_PYTHON_MODULE(pyJacobi)
 {
@@ -154,6 +159,7 @@ BOOST_PYTHON_MODULE(pyJacobi)
 				.def("set_u_odd",&PyJacobi::set_u_odd)
 				.def("set_rhs",&PyJacobi::set_rhs)
 				.def("solve",&PyJacobi::solve)
+                                .def("get_nIter",&PyJacobi::get_nIter)
 				;
 }
 

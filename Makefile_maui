@@ -10,8 +10,8 @@ BOOST_INC = /gpfs/pkgs/mhpcc/boost/include
 BOOST_LIB = /gpfs/pkgs/mhpcc/boost/lib
  
 # compile mesh classes
-TARGET=Jacobi_Solver
-FILE=PyJacobi_Solver
+TARGET=pyJacobi
+FILE=PyJacobi
 EXT=cpp
 
 # GNU tools
@@ -26,7 +26,7 @@ MPI_CC=pgc++
 MPI_FLAGS=-std=c++11
 MPI_FLAGS2=-std=c++11 -shared -Wl,--export-dynamic 
 
-SOURCES= PyJacobi_Solver.cpp WorkArounds.cpp
+SOURCES= PyJacobi.cpp WorkArounds.cpp
 OBJECTS= WorkArounds.o 
 	 
 

@@ -72,7 +72,7 @@ def jacobi_solver_boost(L,dp_dx,mu,u_i,tol):
     js_obj.set_u_odd(u_odd)
     js_obj.set_rhs(rhs);
    
-    exit_code = js_obj.solve(tol,np.int32(20000));
+    exit_code = js_obj.solve(1e-6,20000);
     nIter = js_obj.get_nIter();
         
     return u_out, nIter, exit_code
@@ -105,8 +105,8 @@ Y= np.linspace(0.,L,N);
 u_n = np.zeros(N,dtype=np.float64)
 u_n[0] = U_o; u_n[N-1] = U_L;
 t0 = time.time()
-u_n, nIter, exit_code = jacobi_solver(L,dp_dx,mu,u_n,tol)
-#u_n, nIter, exit_code = jacobi_solver_boost(L,dp_dx,mu,u_n,tol)
+#u_n, nIter, exit_code = jacobi_solver(L,dp_dx,mu,u_n,tol)
+u_n, nIter, exit_code = jacobi_solver_boost(L,dp_dx,mu,u_n,tol)
 t1 = time.time()
 elapsed_time = t1 - t0;
 print "Elapsed time = {} sec; nIter = {}; exit_code = {}".\
