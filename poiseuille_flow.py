@@ -9,6 +9,9 @@ Created on Tue May 29 13:05:03 2018
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+import sys
+sys.path.insert(1,'.')
+
 
 import pyJacobi as js
 
@@ -86,6 +89,8 @@ dp_dx = -3e4; # Pa/m, pressure gradiaent
 U_o = 0.; # velocity on lower boundary
 U_L = 0.; # velocity on upper boundary
 
+TO_PLOT=0; #boolean to indicate if you want to produce a plot
+
 # parameters of the analytic solution
 K = (1./mu)*dp_dx
 c1 = -K*L/2.
@@ -112,10 +117,11 @@ elapsed_time = t1 - t0;
 print "Elapsed time = {} sec; nIter = {}; exit_code = {}".\
 format(elapsed_time,nIter,exit_code)
 
-# plot the results
-plt.plot(u_n,Y)
-plt.title('Velocity for Poiseuille flow')
-plt.xlabel('Velocity (m/s)')
-plt.ylabel('Channel Position (m)')
-plt.grid(True)
-plt.show()
+if TO_PLOT:
+  # plot the results
+  plt.plot(u_n,Y)
+  plt.title('Velocity for Poiseuille flow')
+  plt.xlabel('Velocity (m/s)')
+  plt.ylabel('Channel Position (m)')
+  plt.grid(True)
+  plt.show()
